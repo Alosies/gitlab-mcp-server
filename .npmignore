@@ -11,3 +11,7 @@ coverage/
 .nyc_output/
 .vscode/
 .idea/
+dist/**/*.test.*
+dist/**/__tests__/
+vitest.config.ts
+.eslintrc.json

@@ -25,7 +25,7 @@ A Model Context Protocol (MCP) server that provides integration with GitLab's RE
 ### Option 1: Install from npm (Recommended)
 
 ```bash
-npm install -g gitlab-mcp-server
+npm install -g @alosies/gitlab-mcp-server
 ```
 
 ### Option 2: Install from source

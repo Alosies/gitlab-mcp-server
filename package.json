@@ -1,5 +1,5 @@
 {
-  "name": "gitlab-mcp-server",
+  "name": "@alosies/gitlab-mcp-server",
   "version": "1.0.0",
   "description": "MCP server for GitLab API integration with comprehensive project, issue, merge request, pipeline, and job management capabilities",
   "main": "dist/index.js",
@@ -8,15 +8,25 @@
     "gitlab-mcp-server": "./dist/index.js"
   },
   "files": [
-    "dist",
-    "README.md",
-    "package.json"
+    "dist/index.js",
+    "dist/index.d.ts",
+    "dist/index.js.map",
+    "dist/index.d.ts.map",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc",
+    "clean": "rm -rf dist",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
-    "prepublishOnly": "npm run build"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run clean && npm run build && npm run test"
   },
   "keywords": [
     "mcp",
@@ -33,16 +43,16 @@
     "issues",
     "merge-requests"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "Alos <alosies@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/gitlab-mcp-server.git"
+    "url": "https://github.com/alosies/gitlab-mcp-server.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/gitlab-mcp-server/issues"
+    "url": "https://github.com/alosies/gitlab-mcp-server/issues"
   },
-  "homepage": "https://github.com/yourusername/gitlab-mcp-server#readme",
+  "homepage": "https://github.com/alosies/gitlab-mcp-server#readme",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -52,6 +62,12 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "typescript": "^5.5.4"
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.0"
   }
 }
