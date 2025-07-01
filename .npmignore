@@ -1,0 +1,13 @@
+src/
+*.ts
+!*.d.ts
+tsconfig.json
+.env
+node_modules/
+.git/
+.DS_Store
+*.log
+coverage/
+.nyc_output/
+.vscode/
+.idea/

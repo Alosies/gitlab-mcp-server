@@ -1,0 +1,57 @@
+{
+  "name": "gitlab-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for GitLab API integration with comprehensive project, issue, merge request, pipeline, and job management capabilities",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "gitlab-mcp-server": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "gitlab",
+    "api",
+    "server",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "integration",
+    "devops",
+    "ci-cd",
+    "pipelines",
+    "issues",
+    "merge-requests"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/gitlab-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/gitlab-mcp-server/issues"
+  },
+  "homepage": "https://github.com/yourusername/gitlab-mcp-server#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "axios": "^1.7.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.4"
+  }
+}
