@@ -26,6 +26,7 @@ declare class GitLabMCPServer implements IGitLabMCPServer {
     private listPipelineJobs;
     private getPipelineVariables;
     private getJobLogs;
+    private getJobTrace;
     run(): Promise<void>;
 }
 export { GitLabMCPServer };

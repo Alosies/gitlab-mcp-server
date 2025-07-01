@@ -256,6 +256,10 @@ npm install -g @alosies/gitlab-mcp-server
 - **`get_job_logs`**: Get the log (trace) file of a specific job
   - Required: project_id, job_id
 
+- **`get_job_trace`**: Get job trace with advanced options for large logs
+  - Required: project_id, job_id
+  - Optional: lines_limit (default: 1000), tail (default: false), raw (default: false)
+
 ### User Information
 
 - **`get_user`**: Get current authenticated user information
@@ -276,6 +280,46 @@ Once configured with Claude Desktop, you can use natural language to interact wi
 - "Cancel the running pipeline #101"
 - "Show me all jobs in pipeline #456"
 - "Get the logs for job #789 in project myproject"
+- "Get the last 500 lines of logs for job #789"
+- "Show me the first 100 lines of job trace for debugging"
+
+## Enhanced Job Trace Features
+
+The `get_job_trace` tool provides advanced options for handling large CI/CD job logs:
+
+### Key Features
+
+- **🔢 Line Limiting**: Control how many lines to retrieve (default: 1000)
+- **🔚 Tail Mode**: Get the last N lines instead of first N lines
+- **📄 Raw Mode**: Return clean log content without formatting
+- **📊 Metadata**: Shows total lines, truncation info, and navigation hints
+- **⚠️ Large Log Handling**: Automatic truncation warnings for logs > limit
+
+### Usage Examples
+
+**Get last 500 lines (tail mode):**
+```
+"Get the last 500 lines from job 123 in project myproject"
+```
+
+**Get first 100 lines for debugging:**
+```
+"Show me first 100 lines of job 456 logs"
+```
+
+**Raw output without formatting:**
+```
+"Get raw job logs for job 789 without metadata"
+```
+
+### When to Use Each Tool
+
+- **`get_job_logs`**: For complete logs of small to medium jobs
+- **`get_job_trace`**: For large logs where you need:
+  - Only recent output (tail mode)
+  - Quick debugging (line limits)
+  - Clean output for scripts (raw mode)
+  - Metadata about log size
 
 ## TypeScript Usage
 
@@ -289,7 +333,8 @@ import type {
   GitLabIssue,
   GitLabJob,
   ListProjectsParams,
-  GetJobLogsParams
+  GetJobLogsParams,
+  GetJobTraceParams
 } from '@alosies/gitlab-mcp-server/types';
 
 // Use typed parameters
@@ -302,6 +347,14 @@ const projectParams: ListProjectsParams = {
 const jobLogsParams: GetJobLogsParams = {
   project_id: '123',
   job_id: 456
+};
+
+const jobTraceParams: GetJobTraceParams = {
+  project_id: '123',
+  job_id: 456,
+  lines_limit: 500,
+  tail: true,
+  raw: false
 };
 
 // Type-safe functions

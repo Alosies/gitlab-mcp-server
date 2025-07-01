@@ -30,6 +30,7 @@ import type {
   ListPipelineJobsParams,
   GetPipelineVariablesParams,
   GetJobLogsParams,
+  GetJobTraceParams,
 } from './types.js';
 
 class GitLabMCPServer implements IGitLabMCPServer {
@@ -631,6 +632,39 @@ class GitLabMCPServer implements IGitLabMCPServer {
               required: ['project_id', 'job_id'],
             },
           },
+          {
+            name: 'get_job_trace',
+            description: 'Get job trace with options for partial logs, tail mode, and line limits',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                project_id: {
+                  type: 'string',
+                  description: 'Project ID or path',
+                },
+                job_id: {
+                  type: 'number',
+                  description: 'Job ID',
+                },
+                lines_limit: {
+                  type: 'number',
+                  description: 'Maximum number of lines to return (default: 1000)',
+                  default: 1000,
+                },
+                tail: {
+                  type: 'boolean',
+                  description: 'Get the last N lines instead of first N lines',
+                  default: false,
+                },
+                raw: {
+                  type: 'boolean',
+                  description: 'Return raw log without formatting',
+                  default: false,
+                },
+              },
+              required: ['project_id', 'job_id'],
+            },
+          },
         ] as Tool[],
       };
     });
@@ -680,6 +714,8 @@ class GitLabMCPServer implements IGitLabMCPServer {
             return await this.getPipelineVariables(args as unknown as GetPipelineVariablesParams);
           case 'get_job_logs':
             return await this.getJobLogs(args as unknown as GetJobLogsParams);
+          case 'get_job_trace':
+            return await this.getJobTrace(args as unknown as GetJobTraceParams);
           default:
             throw new Error(`Unknown tool: ${name}`);
         }
@@ -1045,6 +1081,93 @@ class GitLabMCPServer implements IGitLabMCPServer {
         },
       ],
     };
+  }
+
+  private async getJobTrace(args: GetJobTraceParams): Promise<MCPResponse> {
+    try {
+      const response = await this.axios.get(`/projects/${encodeURIComponent(args.project_id)}/jobs/${args.job_id}/trace`);
+      
+      let logContent = response.data;
+      const linesLimit = args.lines_limit || 1000;
+      
+      if (typeof logContent === 'string' && logContent) {
+        const lines = logContent.split('\n');
+        const totalLines = lines.length;
+        
+        // Apply line limiting
+        let processedLines: string[];
+        
+        if (args.tail) {
+          // Get last N lines
+          processedLines = lines.slice(-linesLimit);
+        } else {
+          // Get first N lines
+          processedLines = lines.slice(0, linesLimit);
+        }
+        
+        const processedContent = processedLines.join('\n');
+        
+        // Prepare response with metadata
+        let responseText: string;
+        
+        if (args.raw) {
+          responseText = processedContent;
+        } else {
+          const metadata = [
+            `📋 Job Trace Summary`,
+            `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+            `📊 Total lines: ${totalLines}`,
+            `📄 Showing: ${processedLines.length} lines ${args.tail ? '(last)' : '(first)'}`,
+            `🔗 Project: ${args.project_id}`,
+            `🚀 Job ID: ${args.job_id}`,
+            ``,
+            `📝 Log Content:`,
+            `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+            processedContent
+          ];
+          
+          if (totalLines > linesLimit) {
+            metadata.push('', `⚠️  Log truncated. Total lines: ${totalLines}, Showing: ${processedLines.length}`);
+            if (args.tail) {
+              metadata.push(`💡 Use tail:false to see the beginning of the log`);
+            } else {
+              metadata.push(`💡 Use tail:true to see the end of the log`);
+            }
+          }
+          
+          responseText = metadata.join('\n');
+        }
+        
+        return {
+          content: [
+            {
+              type: 'text',
+              text: responseText,
+            },
+          ],
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `No log content available for job ${args.job_id} in project ${args.project_id}`,
+            },
+          ],
+        };
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Failed to retrieve job trace: ${errorMessage}`,
+          },
+        ],
+        isError: true,
+      };
+    }
   }
 
   async run() {

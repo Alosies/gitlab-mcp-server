@@ -330,6 +330,14 @@ export interface GetJobLogsParams {
   job_id: number;
 }
 
+export interface GetJobTraceParams {
+  project_id: string;
+  job_id: number;
+  lines_limit?: number;
+  tail?: boolean;
+  raw?: boolean;
+}
+
 // MCP Response Types
 export interface MCPResponse {
   content: Array<{
