@@ -1,6 +1,6 @@
 # GitLab MCP Server
 
-A Model Context Protocol (MCP) server that provides integration with GitLab's REST API. This server allows you to interact with GitLab projects, issues, merge requests, and more through the MCP protocol.
+A fully typed TypeScript Model Context Protocol (MCP) server that provides comprehensive integration with GitLab's REST API. This server allows you to interact with GitLab projects, issues, merge requests, pipelines, jobs, and more through the MCP protocol with complete type safety.
 
 ## Features
 
@@ -14,11 +14,14 @@ A Model Context Protocol (MCP) server that provides integration with GitLab's RE
 - **Branches**: List repository branches
 - **Commits**: Get project commit history
 - **User**: Get current user information
+- **TypeScript**: Fully typed with comprehensive type definitions
+- **Developer Experience**: Complete IntelliSense and type safety
 
 ## Prerequisites
 
 - Node.js 18+ and npm
 - GitLab personal access token
+- TypeScript 5.0+ (for development or type-checking)
 
 ## Installation
 
@@ -234,6 +237,50 @@ Once configured with Claude Desktop, you can use natural language to interact wi
 - "Cancel the running pipeline #101"
 - "Show me all jobs in pipeline #456"
 - "Get the logs for job #789 in project myproject"
+
+## TypeScript Usage
+
+This package provides complete TypeScript support with comprehensive type definitions:
+
+```typescript
+// Import the server class and types
+import { GitLabMCPServer } from '@alosies/gitlab-mcp-server';
+import type {
+  GitLabProject,
+  GitLabIssue,
+  GitLabJob,
+  ListProjectsParams,
+  GetJobLogsParams
+} from '@alosies/gitlab-mcp-server/types';
+
+// Use typed parameters
+const projectParams: ListProjectsParams = {
+  search: 'my-project',
+  visibility: 'private',
+  per_page: 10
+};
+
+const jobLogsParams: GetJobLogsParams = {
+  project_id: '123',
+  job_id: 456
+};
+
+// Type-safe functions
+function processProject(project: GitLabProject): string {
+  return `Project: ${project.name} (${project.visibility})`;
+}
+
+function processJob(job: GitLabJob): string {
+  return `Job: ${job.name} - Status: ${job.status}`;
+}
+```
+
+### Available Type Categories
+
+- **API Objects**: `GitLabProject`, `GitLabIssue`, `GitLabMergeRequest`, `GitLabPipeline`, `GitLabJob`, etc.
+- **Parameter Types**: `ListProjectsParams`, `CreateIssueParams`, `GetJobLogsParams`, etc.
+- **Response Types**: `MCPResponse` for all tool responses
+- **Server Interface**: `IGitLabMCPServer` for the main server class
 
 ## API Configuration
 

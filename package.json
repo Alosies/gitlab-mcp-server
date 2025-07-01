@@ -1,9 +1,20 @@
 {
   "name": "@alosies/gitlab-mcp-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "MCP server for GitLab API integration with comprehensive project, issue, merge request, pipeline, and job management capabilities",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
+    }
+  },
   "bin": {
     "gitlab-mcp-server": "./dist/index.js"
   },
@@ -12,6 +23,10 @@
     "dist/index.d.ts",
     "dist/index.js.map",
     "dist/index.d.ts.map",
+    "dist/types.js",
+    "dist/types.d.ts",
+    "dist/types.js.map",
+    "dist/types.d.ts.map",
     "README.md"
   ],
   "scripts": {
@@ -41,7 +56,9 @@
     "ci-cd",
     "pipelines",
     "issues",
-    "merge-requests"
+    "merge-requests",
+    "typescript",
+    "types"
   ],
   "author": "Alos <alosies@gmail.com>",
   "license": "MIT",

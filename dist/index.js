@@ -992,6 +992,9 @@ class GitLabMCPServer {
         console.error('GitLab MCP server running on stdio');
     }
 }
+// Export the server class and types for library usage
+export { GitLabMCPServer };
+// CLI execution
 const server = new GitLabMCPServer();
 server.run().catch(console.error);
 //# sourceMappingURL=index.js.map

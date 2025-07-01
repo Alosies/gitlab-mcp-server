@@ -8,12 +8,31 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import axios, { AxiosInstance } from 'axios';
 
-interface GitLabConfig {
-  baseUrl: string;
-  token: string;
-}
+// Import all types
+import type {
+  GitLabConfig,
+  MCPResponse,
+  IGitLabMCPServer,
+  ListProjectsParams,
+  GetProjectParams,
+  ListIssuesParams,
+  GetIssueParams,
+  CreateIssueParams,
+  ListMergeRequestsParams,
+  GetMergeRequestParams,
+  CreateMergeRequestParams,
+  ListProjectBranchesParams,
+  GetProjectCommitsParams,
+  ListPipelinesParams,
+  GetPipelineParams,
+  CreatePipelineParams,
+  PipelineActionParams,
+  ListPipelineJobsParams,
+  GetPipelineVariablesParams,
+  GetJobLogsParams,
+} from './types.js';
 
-class GitLabMCPServer {
+class GitLabMCPServer implements IGitLabMCPServer {
   private server: Server;
   private axios: AxiosInstance;
   private config: GitLabConfig;
@@ -622,45 +641,45 @@ class GitLabMCPServer {
       try {
         switch (name) {
           case 'list_projects':
-            return await this.listProjects(args);
+            return await this.listProjects(args as unknown as ListProjectsParams);
           case 'get_project':
-            return await this.getProject(args);
+            return await this.getProject(args as unknown as GetProjectParams);
           case 'list_issues':
-            return await this.listIssues(args);
+            return await this.listIssues(args as unknown as ListIssuesParams);
           case 'get_issue':
-            return await this.getIssue(args);
+            return await this.getIssue(args as unknown as GetIssueParams);
           case 'create_issue':
-            return await this.createIssue(args);
+            return await this.createIssue(args as unknown as CreateIssueParams);
           case 'list_merge_requests':
-            return await this.listMergeRequests(args);
+            return await this.listMergeRequests(args as unknown as ListMergeRequestsParams);
           case 'get_merge_request':
-            return await this.getMergeRequest(args);
+            return await this.getMergeRequest(args as unknown as GetMergeRequestParams);
           case 'create_merge_request':
-            return await this.createMergeRequest(args);
+            return await this.createMergeRequest(args as unknown as CreateMergeRequestParams);
           case 'get_user':
-            return await this.getUser(args);
+            return await this.getUser(args as unknown as Record<string, never>);
           case 'list_project_branches':
-            return await this.listProjectBranches(args);
+            return await this.listProjectBranches(args as unknown as ListProjectBranchesParams);
           case 'get_project_commits':
-            return await this.getProjectCommits(args);
+            return await this.getProjectCommits(args as unknown as GetProjectCommitsParams);
           case 'list_pipelines':
-            return await this.listPipelines(args);
+            return await this.listPipelines(args as unknown as ListPipelinesParams);
           case 'get_pipeline':
-            return await this.getPipeline(args);
+            return await this.getPipeline(args as unknown as GetPipelineParams);
           case 'create_pipeline':
-            return await this.createPipeline(args);
+            return await this.createPipeline(args as unknown as CreatePipelineParams);
           case 'retry_pipeline':
-            return await this.retryPipeline(args);
+            return await this.retryPipeline(args as unknown as PipelineActionParams);
           case 'cancel_pipeline':
-            return await this.cancelPipeline(args);
+            return await this.cancelPipeline(args as unknown as PipelineActionParams);
           case 'delete_pipeline':
-            return await this.deletePipeline(args);
+            return await this.deletePipeline(args as unknown as PipelineActionParams);
           case 'list_pipeline_jobs':
-            return await this.listPipelineJobs(args);
+            return await this.listPipelineJobs(args as unknown as ListPipelineJobsParams);
           case 'get_pipeline_variables':
-            return await this.getPipelineVariables(args);
+            return await this.getPipelineVariables(args as unknown as GetPipelineVariablesParams);
           case 'get_job_logs':
-            return await this.getJobLogs(args);
+            return await this.getJobLogs(args as unknown as GetJobLogsParams);
           default:
             throw new Error(`Unknown tool: ${name}`);
         }
@@ -679,7 +698,7 @@ class GitLabMCPServer {
     });
   }
 
-  private async listProjects(args: any) {
+  private async listProjects(args: ListProjectsParams): Promise<MCPResponse> {
     const params = new URLSearchParams();
     
     if (args.search) params.append('search', args.search);
@@ -699,7 +718,7 @@ class GitLabMCPServer {
     };
   }
 
-  private async getProject(args: any) {
+  private async getProject(args: GetProjectParams): Promise<MCPResponse> {
     const response = await this.axios.get(`/projects/${encodeURIComponent(args.project_id)}`);
     
     return {
@@ -712,7 +731,7 @@ class GitLabMCPServer {
     };
   }
 
-  private async listIssues(args: any) {
+  private async listIssues(args: ListIssuesParams): Promise<MCPResponse> {
     const params = new URLSearchParams();
     
     if (args.state) params.append('state', args.state);
@@ -747,7 +766,7 @@ class GitLabMCPServer {
     };
   }
 
-  private async createIssue(args: any) {
+  private async createIssue(args: CreateIssueParams): Promise<MCPResponse> {
     const data: any = {
       title: args.title,
     };
@@ -830,7 +849,7 @@ class GitLabMCPServer {
     };
   }
 
-  private async getUser(args: any) {
+  private async getUser(args: Record<string, never>): Promise<MCPResponse> {
     const response = await this.axios.get('/user');
     
     return {
@@ -882,7 +901,7 @@ class GitLabMCPServer {
     };
   }
 
-  private async listPipelines(args: any) {
+  private async listPipelines(args: ListPipelinesParams): Promise<MCPResponse> {
     const params = new URLSearchParams();
     
     if (args.status) params.append('status', args.status);
@@ -1015,7 +1034,7 @@ class GitLabMCPServer {
     };
   }
 
-  private async getJobLogs(args: any) {
+  private async getJobLogs(args: GetJobLogsParams): Promise<MCPResponse> {
     const response = await this.axios.get(`/projects/${encodeURIComponent(args.project_id)}/jobs/${args.job_id}/trace`);
     
     return {
@@ -1035,5 +1054,10 @@ class GitLabMCPServer {
   }
 }
 
+// Export the server class and types for library usage
+export { GitLabMCPServer };
+export type * from './types.js';
+
+// CLI execution
 const server = new GitLabMCPServer();
 server.run().catch(console.error);
