@@ -25,32 +25,50 @@ A fully typed TypeScript Model Context Protocol (MCP) server that provides compr
 
 ## Installation
 
-### Option 1: Install from npm (Recommended)
+### Option 1: Use with npx (Recommended)
+
+No installation required! Claude Desktop will automatically download and run the latest version:
+
+```json
+{
+  "mcpServers": {
+    "gitlab": {
+      "command": "npx",
+      "args": ["-y", "@alosies/gitlab-mcp-server"],
+      "env": {
+        "NPM_CONFIG_TOKEN": "your-gitlab-token-here"
+      }
+    }
+  }
+}
+```
+
+### Option 2: Global Installation
 
 ```bash
 npm install -g @alosies/gitlab-mcp-server
 ```
 
-### Option 2: Install from source
-
-1. Clone or download this repository
-2. Install dependencies:
-
-```bash
-npm install
+Then use in Claude Desktop:
+```json
+{
+  "mcpServers": {
+    "gitlab": {
+      "command": "gitlab-mcp-server",
+      "env": {
+        "NPM_CONFIG_TOKEN": "your-gitlab-token-here"
+      }
+    }
+  }
+}
 ```
 
-3. Build the TypeScript code:
+### Option 3: Development from Source
 
-```bash
-npm run build
-```
-
-4. Link globally (optional):
-
-```bash
-npm link
-```
+1. Clone this repository
+2. Install dependencies: `npm install`
+3. Build the TypeScript code: `npm run build`
+4. Use in Claude Desktop with full path
 
 ## Configuration
 
@@ -83,23 +101,24 @@ NPM_CONFIG_TOKEN=your-gitlab-token-here
 
 ### Running the Server
 
-**If installed globally via npm:**
+**With npx (recommended):**
+```bash
+npx -y @alosies/gitlab-mcp-server
+```
 
+**If installed globally:**
 ```bash
 gitlab-mcp-server
 ```
 
-**If installed from source:**
-
+**Development from source:**
 ```bash
 npm start
-```
-
-**For development with auto-rebuild:**
-
-```bash
+# or for auto-rebuild:
 npm run dev
 ```
+
+**⚠️ Security Note**: Never commit your GitLab token to version control. The token in the example above is just a placeholder.
 
 ### Configuring with Claude Desktop
 
@@ -108,7 +127,27 @@ Add the following to your Claude Desktop configuration file:
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
 
-**If installed globally via npm:**
+**Recommended: Using npx (always gets latest version):**
+
+```json
+{
+  "mcpServers": {
+    "gitlab": {
+      "command": "npx",
+      "args": ["-y", "@alosies/gitlab-mcp-server"],
+      "env": {
+        "NPM_CONFIG_TOKEN": "your-gitlab-token-here"
+      }
+    }
+  }
+}
+```
+
+**Alternative: Global installation:**
+
+```bash
+npm install -g @alosies/gitlab-mcp-server
+```
 
 ```json
 {
@@ -123,7 +162,7 @@ Add the following to your Claude Desktop configuration file:
 }
 ```
 
-**If installed from source:**
+**Development: From source:**
 
 ```json
 {
