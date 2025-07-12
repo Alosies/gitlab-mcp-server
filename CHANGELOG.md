@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2025-07-12
+
+### 🔧 Bug Fixes
+- **Package Distribution**: Fixed npm package to include all required files (86 files vs 10)
+- **Binary Execution**: Made CLI executable with proper file permissions
+- **Test Compatibility**: Updated test expectations for v1.3.x releases
+
+### 📦 Package Improvements
+- Complete modular file structure now included in npm distribution
+- Binary `gitlab-mcp-server` command now works correctly via npx
+- Increased package size to 141.9 kB to include all handlers and tools
+
+---
+
 ## [1.3.0] - 2025-06-12
 
 ### 🚀 Added

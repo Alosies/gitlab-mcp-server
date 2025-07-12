@@ -39,7 +39,7 @@ export const DEFAULT_CONFIG: GitLabMCPConfig = {
   },
   server: {
     name: 'gitlab-mcp-server',
-    version: '1.3.0',
+    version: '1.3.1',
     timeout: 30000,
   },
   defaults: {
