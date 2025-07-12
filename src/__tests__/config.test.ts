@@ -243,7 +243,7 @@ describe('ConfigManager', () => {
       
       expect(configManager.getServerConfig()).toEqual({
         name: 'test-server',
-        version: '1.3.0', // from default
+        version: '1.3.1', // from default
         timeout: 5000
       });
       
