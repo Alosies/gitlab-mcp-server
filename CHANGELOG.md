@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.3.0] - 2025-06-12
+## [1.3.0] - 2025-07-12
 
 ### 🚀 Added
 - **Merge Request Updates**: New `update_merge_request` tool for comprehensive merge request management
