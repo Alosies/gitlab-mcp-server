@@ -168,7 +168,6 @@ Job succeeded
       it('should add truncation warnings for large logs', () => {
         const totalLines = 5000;
         const shownLines = 1000;
-        const isTail = false;
         
         const truncationWarning = [
           '',

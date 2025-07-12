@@ -1,0 +1,20 @@
+{
+  "gitlab": {
+    "baseUrl": "https://gitlab.com",
+    "defaultProject": "myorg/myproject"
+  },
+  "server": {
+    "name": "gitlab-mcp-server",
+    "version": "1.2.0",
+    "timeout": 30000
+  },
+  "defaults": {
+    "perPage": 50,
+    "projectScope": "owned"
+  },
+  "features": {
+    "enableCaching": false,
+    "enableMetrics": true,
+    "strictScoping": true
+  }
+}

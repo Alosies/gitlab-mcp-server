@@ -103,3 +103,7 @@ temp/
 # Debug files
 debug/
 *.map
+
+# Claude Code files
+.claude/
+CLAUDE.md

@@ -205,6 +205,7 @@ export interface ListProjectsParams {
   visibility?: 'public' | 'internal' | 'private';
   owned?: boolean;
   per_page?: number;
+  simple?: boolean; // Use simple=true for minimal project info (default: true)
 }
 
 export interface GetProjectParams {
@@ -218,6 +219,7 @@ export interface ListIssuesParams {
   assignee_id?: number;
   author_id?: number;
   search?: string;
+  scope?: 'created_by_me' | 'assigned_to_me' | 'all';
   per_page?: number;
 }
 
@@ -243,6 +245,7 @@ export interface ListMergeRequestsParams {
   assignee_id?: number;
   author_id?: number;
   search?: string;
+  scope?: 'created_by_me' | 'assigned_to_me' | 'all';
   per_page?: number;
 }
 
@@ -261,6 +264,24 @@ export interface CreateMergeRequestParams {
   reviewer_ids?: number[];
   labels?: string;
   milestone_id?: number;
+}
+
+export interface UpdateMergeRequestParams {
+  project_id: string;
+  merge_request_iid: number;
+  title?: string;
+  description?: string;
+  state_event?: 'close' | 'reopen';
+  target_branch?: string;
+  assignee_id?: number;
+  assignee_ids?: number[];
+  reviewer_ids?: number[];
+  milestone_id?: number;
+  labels?: string;
+  remove_source_branch?: boolean;
+  squash?: boolean;
+  allow_collaboration?: boolean;
+  merge_when_pipeline_succeeds?: boolean;
 }
 
 export interface ListProjectBranchesParams {
