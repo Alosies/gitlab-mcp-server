@@ -121,7 +121,7 @@ describe('IssueHandlers', () => {
       expect(mockClient.post).toHaveBeenCalledWith('/projects/123/issues', {
         title: 'Complete Issue',
         description: 'This is a detailed description',
-        labels: ['bug', 'urgent'],
+        labels: 'bug,urgent',
         assignee_ids: [456, 789],
         milestone_id: 10
       });
