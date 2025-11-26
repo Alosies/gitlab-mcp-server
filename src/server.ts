@@ -36,6 +36,16 @@ import type {
   GetMergeRequestParams,
   CreateMergeRequestParams,
   UpdateMergeRequestParams,
+  ListMRNotesParams,
+  ListMRDiscussionsParams,
+  CreateMRNoteParams,
+  CreateMRDiscussionParams,
+  ReplyToMRDiscussionParams,
+  ResolveMRDiscussionParams,
+  MarkMRAsDraftParams,
+  MarkMRAsReadyParams,
+  ListMRTemplatesParams,
+  GetMRTemplateParams,
   ListProjectBranchesParams,
   GetProjectCommitsParams,
   ListPipelinesParams,
@@ -150,6 +160,30 @@ export class GitLabMCPServer implements IGitLabMCPServer {
             return await this.mergeRequestHandlers.createMergeRequest(args as unknown as CreateMergeRequestParams);
           case 'update_merge_request':
             return await this.mergeRequestHandlers.updateMergeRequest(args as unknown as UpdateMergeRequestParams);
+
+          // Merge request notes/discussions tools
+          case 'list_mr_notes':
+            return await this.mergeRequestHandlers.listMRNotes(args as unknown as ListMRNotesParams);
+          case 'list_mr_discussions':
+            return await this.mergeRequestHandlers.listMRDiscussions(args as unknown as ListMRDiscussionsParams);
+          case 'create_mr_note':
+            return await this.mergeRequestHandlers.createMRNote(args as unknown as CreateMRNoteParams);
+          case 'create_mr_discussion':
+            return await this.mergeRequestHandlers.createMRDiscussion(args as unknown as CreateMRDiscussionParams);
+          case 'reply_to_mr_discussion':
+            return await this.mergeRequestHandlers.replyToMRDiscussion(args as unknown as ReplyToMRDiscussionParams);
+          case 'resolve_mr_discussion':
+            return await this.mergeRequestHandlers.resolveMRDiscussion(args as unknown as ResolveMRDiscussionParams);
+          case 'unresolve_mr_discussion':
+            return await this.mergeRequestHandlers.unresolveMRDiscussion(args as unknown as ResolveMRDiscussionParams);
+          case 'mark_mr_as_draft':
+            return await this.mergeRequestHandlers.markMRAsDraft(args as unknown as MarkMRAsDraftParams);
+          case 'mark_mr_as_ready':
+            return await this.mergeRequestHandlers.markMRAsReady(args as unknown as MarkMRAsReadyParams);
+          case 'list_mr_templates':
+            return await this.mergeRequestHandlers.listMRTemplates(args as unknown as ListMRTemplatesParams);
+          case 'get_mr_template':
+            return await this.mergeRequestHandlers.getMRTemplate(args as unknown as GetMRTemplateParams);
 
           // User tools
           case 'get_user':

@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-11-26
+
+### 🚀 Added
+
+- **Merge Request Comments & Discussions**: Full support for MR review workflows
+  - `list_mr_notes` - List all comments on a merge request
+  - `list_mr_discussions` - List threaded discussions
+  - `create_mr_note` - Add top-level comments
+  - `create_mr_discussion` - Create new discussion threads with optional inline code positioning
+  - `reply_to_mr_discussion` - Reply to existing discussion threads
+  - `resolve_mr_discussion` - Mark discussions as resolved
+  - `unresolve_mr_discussion` - Mark discussions as unresolved
+
+- **Merge Request Draft Status Management**
+  - `mark_mr_as_draft` - Mark MR as draft (adds "Draft:" prefix)
+  - `mark_mr_as_ready` - Mark MR as ready for review (removes "Draft:" or "WIP:" prefix)
+
+- **Merge Request Templates**
+  - `list_mr_templates` - List available MR templates in a project
+  - `get_mr_template` - Get template content for use in MR descriptions
+
+- **Enhanced Merge Request Filtering**
+  - Added `reviewer_id` filter to `list_merge_requests`
+  - Added `reviewer_username` filter to `list_merge_requests`
+  - Filter MRs where you're assigned as reviewer
+
+### 🧪 Testing
+
+- **Modular Test Structure**: Refactored MR tests into focused test files
+  - `merge-requests.test.ts` - Core MR operations (list, get, create, update)
+  - `merge-requests-notes.test.ts` - Notes and discussions functionality
+  - `merge-requests-draft.test.ts` - Draft/ready status management
+  - `merge-requests-templates.test.ts` - Template operations
+- **104 tests** across 12 test files with comprehensive coverage
+
+### 📚 Documentation
+
+- Updated README with new MR review workflow features
+- Updated tools.md with all 11 new tools and enhanced parameters
+- Added usage examples for comment and review workflows
+
+### 🔄 Backward Compatibility
+
+- **No Breaking Changes**: All existing functionality preserved
+- **11 New Tools**: Added without affecting existing tools
+- **Enhanced Existing Tool**: `list_merge_requests` now supports reviewer filtering
+
+---
+
 ## [1.3.1] - 2025-07-12
 
 ### 🔧 Bug Fixes

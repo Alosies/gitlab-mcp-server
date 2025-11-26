@@ -244,6 +244,8 @@ export interface ListMergeRequestsParams {
   source_branch?: string;
   assignee_id?: number;
   author_id?: number;
+  reviewer_id?: number;
+  reviewer_username?: string;
   search?: string;
   scope?: 'created_by_me' | 'assigned_to_me' | 'all';
   per_page?: number;
@@ -357,6 +359,116 @@ export interface GetJobTraceParams {
   lines_limit?: number;
   tail?: boolean;
   raw?: boolean;
+}
+
+// Merge Request Notes/Comments Types
+export interface GitLabNote {
+  id: number;
+  type: string | null;
+  body: string;
+  attachment: string | null;
+  author: GitLabUser;
+  created_at: string;
+  updated_at: string;
+  system: boolean;
+  noteable_id: number;
+  noteable_type: string;
+  noteable_iid: number | null;
+  resolvable: boolean;
+  resolved?: boolean;
+  resolved_by?: GitLabUser | null;
+  resolved_at?: string | null;
+}
+
+export interface GitLabDiffPosition {
+  base_sha: string;
+  start_sha: string;
+  head_sha: string;
+  old_path: string;
+  new_path: string;
+  position_type: 'text' | 'image';
+  old_line?: number | null;
+  new_line?: number | null;
+}
+
+export interface GitLabDiscussion {
+  id: string;
+  individual_note: boolean;
+  notes: GitLabNote[];
+}
+
+export interface GitLabTemplate {
+  name: string;
+  content: string;
+}
+
+// Merge Request Notes/Discussion Parameter Types
+export interface ListMRNotesParams {
+  project_id: string;
+  merge_request_iid: number;
+  sort?: 'asc' | 'desc';
+  order_by?: 'created_at' | 'updated_at';
+  per_page?: number;
+}
+
+export interface ListMRDiscussionsParams {
+  project_id: string;
+  merge_request_iid: number;
+  per_page?: number;
+}
+
+export interface CreateMRNoteParams {
+  project_id: string;
+  merge_request_iid: number;
+  body: string;
+}
+
+export interface CreateMRDiscussionParams {
+  project_id: string;
+  merge_request_iid: number;
+  body: string;
+  position?: {
+    base_sha: string;
+    start_sha: string;
+    head_sha: string;
+    old_path: string;
+    new_path: string;
+    position_type?: 'text';
+    old_line?: number;
+    new_line?: number;
+  };
+}
+
+export interface ReplyToMRDiscussionParams {
+  project_id: string;
+  merge_request_iid: number;
+  discussion_id: string;
+  body: string;
+}
+
+export interface ResolveMRDiscussionParams {
+  project_id: string;
+  merge_request_iid: number;
+  discussion_id: string;
+}
+
+export interface MarkMRAsDraftParams {
+  project_id: string;
+  merge_request_iid: number;
+}
+
+export interface MarkMRAsReadyParams {
+  project_id: string;
+  merge_request_iid: number;
+}
+
+export interface ListMRTemplatesParams {
+  project_id: string;
+}
+
+export interface GetMRTemplateParams {
+  project_id: string;
+  name: string;
 }
 
 // MCP Response Types

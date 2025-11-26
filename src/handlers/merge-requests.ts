@@ -1,9 +1,20 @@
 import type { GitLabClient } from '../client.js';
-import type { 
-  ListMergeRequestsParams, 
+import type {
+  ListMergeRequestsParams,
   GetMergeRequestParams,
   CreateMergeRequestParams,
-  UpdateMergeRequestParams
+  UpdateMergeRequestParams,
+  ListMRNotesParams,
+  ListMRDiscussionsParams,
+  CreateMRNoteParams,
+  CreateMRDiscussionParams,
+  ReplyToMRDiscussionParams,
+  ResolveMRDiscussionParams,
+  MarkMRAsDraftParams,
+  MarkMRAsReadyParams,
+  ListMRTemplatesParams,
+  GetMRTemplateParams,
+  GitLabMergeRequest,
 } from '../types.js';
 
 export class MergeRequestHandlers {
@@ -13,12 +24,14 @@ export class MergeRequestHandlers {
 
   async listMergeRequests(args: ListMergeRequestsParams) {
     const params = new URLSearchParams();
-    
+
     if (args.state) params.append('state', args.state);
     if (args.target_branch) params.append('target_branch', args.target_branch);
     if (args.source_branch) params.append('source_branch', args.source_branch);
     if (args.assignee_id) params.append('assignee_id', String(args.assignee_id));
     if (args.author_id) params.append('author_id', String(args.author_id));
+    if (args.reviewer_id) params.append('reviewer_id', String(args.reviewer_id));
+    if (args.reviewer_username) params.append('reviewer_username', args.reviewer_username);
     if (args.search) params.append('search', args.search);
     // Only add scope if explicitly provided by user
     if (args.scope) params.append('scope', args.scope);
@@ -96,7 +109,255 @@ export class MergeRequestHandlers {
     if (args.merge_when_pipeline_succeeds !== undefined) requestData.merge_when_pipeline_succeeds = args.merge_when_pipeline_succeeds;
 
     const data = await this.client.put(`/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}`, requestData);
-    
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async listMRNotes(args: ListMRNotesParams) {
+    const params = new URLSearchParams();
+
+    if (args.sort) params.append('sort', args.sort);
+    if (args.order_by) params.append('order_by', args.order_by);
+    params.append('per_page', String(args.per_page || 20));
+
+    const data = await this.client.get(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/notes?${params.toString()}`
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async listMRDiscussions(args: ListMRDiscussionsParams) {
+    const params = new URLSearchParams();
+    params.append('per_page', String(args.per_page || 20));
+
+    const data = await this.client.get(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions?${params.toString()}`
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async createMRNote(args: CreateMRNoteParams) {
+    const requestData = {
+      body: args.body,
+    };
+
+    const data = await this.client.post(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/notes`,
+      requestData
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async createMRDiscussion(args: CreateMRDiscussionParams) {
+    const requestData: Record<string, unknown> = {
+      body: args.body,
+    };
+
+    // Add position for inline/diff comments
+    if (args.position) {
+      requestData.position = {
+        base_sha: args.position.base_sha,
+        start_sha: args.position.start_sha,
+        head_sha: args.position.head_sha,
+        old_path: args.position.old_path,
+        new_path: args.position.new_path,
+        position_type: args.position.position_type || 'text',
+        ...(args.position.old_line !== undefined && { old_line: args.position.old_line }),
+        ...(args.position.new_line !== undefined && { new_line: args.position.new_line }),
+      };
+    }
+
+    const data = await this.client.post(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions`,
+      requestData
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async replyToMRDiscussion(args: ReplyToMRDiscussionParams) {
+    const requestData = {
+      body: args.body,
+    };
+
+    const data = await this.client.post(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions/${args.discussion_id}/notes`,
+      requestData
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async resolveMRDiscussion(args: ResolveMRDiscussionParams) {
+    const data = await this.client.put(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions/${args.discussion_id}`,
+      { resolved: true }
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async unresolveMRDiscussion(args: ResolveMRDiscussionParams) {
+    const data = await this.client.put(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions/${args.discussion_id}`,
+      { resolved: false }
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async markMRAsDraft(args: MarkMRAsDraftParams) {
+    // First get the current MR to check its title
+    const mr = (await this.client.get(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}`
+    )) as GitLabMergeRequest;
+
+    // Check if already a draft
+    if (mr.title.startsWith('Draft: ') || mr.title.startsWith('WIP: ')) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({ message: 'Merge request is already marked as draft', ...mr }, null, 2),
+          },
+        ],
+      };
+    }
+
+    // Update the title to add Draft: prefix
+    const data = await this.client.put(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}`,
+      { title: `Draft: ${mr.title}` }
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async markMRAsReady(args: MarkMRAsReadyParams) {
+    // First get the current MR to check its title
+    const mr = (await this.client.get(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}`
+    )) as GitLabMergeRequest;
+
+    // Check if it's a draft and remove the prefix
+    let newTitle = mr.title;
+    if (mr.title.startsWith('Draft: ')) {
+      newTitle = mr.title.replace(/^Draft: /, '');
+    } else if (mr.title.startsWith('WIP: ')) {
+      newTitle = mr.title.replace(/^WIP: /, '');
+    } else {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({ message: 'Merge request is already marked as ready', ...mr }, null, 2),
+          },
+        ],
+      };
+    }
+
+    // Update the title to remove the draft prefix
+    const data = await this.client.put(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}`,
+      { title: newTitle }
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async listMRTemplates(args: ListMRTemplatesParams) {
+    const data = await this.client.get(
+      `/projects/${encodeURIComponent(args.project_id)}/templates/merge_requests`
+    );
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
+  async getMRTemplate(args: GetMRTemplateParams) {
+    const data = await this.client.get(
+      `/projects/${encodeURIComponent(args.project_id)}/templates/merge_requests/${encodeURIComponent(args.name)}`
+    );
+
     return {
       content: [
         {

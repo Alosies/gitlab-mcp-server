@@ -32,13 +32,20 @@ Ask Claude things like:
 - "List my GitLab projects"
 - "Show me open issues in myproject"
 - "Create a merge request from feature-branch to main"
+- "Comment on MR #42 in myproject"
+- "Show me MRs where I'm assigned as reviewer"
+- "Mark MR #15 as ready for review"
 - "Get the logs for job #123"
 
 ## Features
 
 - **Projects**: List, get details
-- **Issues**: List, get, create  
-- **Merge Requests**: List, get, create, update
+- **Issues**: List, get, create
+- **Merge Requests**: List, get, create, update with full review workflow support
+  - **Comments & Discussions**: Create notes, threaded discussions, inline code comments
+  - **Review Management**: Resolve/unresolve discussions, mark as draft/ready
+  - **Filtering**: Filter by reviewer, assignee, author
+  - **Templates**: Use GitLab MR templates for descriptions
 - **Pipelines**: List, get, create, retry, cancel, delete
 - **Jobs**: List jobs, get logs with advanced trace options
 - **Repository**: List branches, get commits

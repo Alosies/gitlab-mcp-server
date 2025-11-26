@@ -33,7 +33,7 @@ Create a new issue
 ### `list_merge_requests`
 List merge requests in a project
 - **Required**: project_id
-- **Optional filters**: state, target_branch, source_branch, assignee_id, author_id, search, scope, per_page
+- **Optional filters**: state, target_branch, source_branch, assignee_id, author_id, reviewer_id, reviewer_username, search, scope, per_page
 
 ### `get_merge_request`
 Get detailed information about a specific merge request
@@ -48,6 +48,60 @@ Create a new merge request
 Update an existing merge request
 - **Required**: project_id, merge_request_iid
 - **Optional**: title, description, state_event, target_branch, assignee_id, assignee_ids, reviewer_ids, labels, milestone_id, remove_source_branch, squash, allow_collaboration, merge_when_pipeline_succeeds
+
+## Merge Request Comments & Discussions
+
+### `list_mr_notes`
+List all notes (comments) on a merge request
+- **Required**: project_id, merge_request_iid
+- **Optional**: sort (asc/desc), order_by (created_at/updated_at), per_page
+
+### `list_mr_discussions`
+List all discussions (threaded comments) on a merge request
+- **Required**: project_id, merge_request_iid
+- **Optional**: per_page
+
+### `create_mr_note`
+Create a top-level comment on a merge request
+- **Required**: project_id, merge_request_iid, body
+
+### `create_mr_discussion`
+Create a new discussion (optionally on a specific line of code)
+- **Required**: project_id, merge_request_iid, body
+- **Optional**: position (for inline comments on diff)
+  - **position fields**: base_sha, start_sha, head_sha, old_path, new_path, old_line, new_line
+
+### `reply_to_mr_discussion`
+Reply to an existing discussion thread
+- **Required**: project_id, merge_request_iid, discussion_id, body
+
+### `resolve_mr_discussion`
+Mark a discussion as resolved
+- **Required**: project_id, merge_request_iid, discussion_id
+
+### `unresolve_mr_discussion`
+Mark a discussion as unresolved
+- **Required**: project_id, merge_request_iid, discussion_id
+
+## Merge Request Draft Status
+
+### `mark_mr_as_draft`
+Mark a merge request as draft (adds "Draft:" prefix)
+- **Required**: project_id, merge_request_iid
+
+### `mark_mr_as_ready`
+Mark a merge request as ready (removes "Draft:" or "WIP:" prefix)
+- **Required**: project_id, merge_request_iid
+
+## Merge Request Templates
+
+### `list_mr_templates`
+List available merge request templates in a project
+- **Required**: project_id
+
+### `get_mr_template`
+Get the content of a specific merge request template
+- **Required**: project_id, name (template name)
 
 ## Repository Operations
 
