@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2025-11-26
+
+### 🚀 Added
+
+- **Merge Request Diffs & Changes**
+  - `get_merge_request_diffs` - Get complete changes/diffs of a merge request with optional view mode (inline/parallel)
+  - `list_merge_request_diffs` - List MR diffs with pagination support and unidiff option (GitLab 16.5+)
+  - `get_branch_diffs` - Compare changes between two branches or commits
+
+- **Commit Operations**
+  - `get_commit` - Get detailed information about a specific commit, including optional stats
+  - `get_commit_diff` - Get changes/diffs introduced by a specific commit
+
+- **Discussion Note Management**
+  - `update_mr_discussion_note` - Modify an existing note in a merge request discussion
+  - `create_mr_discussion_note` - Add a new note to an existing discussion thread
+  - `delete_mr_discussion_note` - Delete a note from a merge request discussion
+
+- **Enhanced Merge Request Lookup**
+  - `get_merge_request` now supports `source_branch` parameter as alternative to `merge_request_iid`
+  - `update_merge_request` now supports `source_branch` parameter for flexible MR identification
+  - `get_merge_request_diffs` and `list_merge_request_diffs` support both IID and source_branch
+
+- **Enhanced Commit Filtering** (`get_project_commits`)
+  - Added `path` filter for file-specific history
+  - Added `all` option to retrieve all commits
+  - Added `with_stats` for addition/deletion counts
+  - Added `first_parent` for merge commit traversal
+  - Added `order` option (default/topo)
+  - Added `trailers` for Git trailer parsing
+  - Added `page` for pagination support
+
+### 🧪 Testing
+
+- Added **26 new tests** for all new functionality
+- New test files:
+  - `merge-requests-diffs.test.ts` - MR diff operations
+  - `merge-requests-discussion-notes.test.ts` - Discussion note operations
+  - `repository-commits.test.ts` - Commit operations
+- **130 total tests** across 15 test files
+
+### 🔄 Backward Compatibility
+
+- **No Breaking Changes**: All existing functionality preserved
+- **11 New Tools**: Added without affecting existing tools
+- **Enhanced Existing Tools**: `get_merge_request`, `update_merge_request`, `get_project_commits` now support additional parameters
+
+---
+
 ## [1.4.0] - 2025-11-26
 
 ### 🚀 Added

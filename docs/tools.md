@@ -36,8 +36,24 @@ List merge requests in a project
 - **Optional filters**: state, target_branch, source_branch, assignee_id, author_id, reviewer_id, reviewer_username, search, scope, per_page
 
 ### `get_merge_request`
-Get detailed information about a specific merge request
-- **Required**: project_id, merge_request_iid
+Get detailed information about a specific merge request. Supports lookup by IID or source branch.
+- **Required**: project_id
+- **Optional**: merge_request_iid OR source_branch (one must be provided)
+
+### `get_merge_request_diffs`
+Get the changes/diffs of a merge request
+- **Required**: project_id
+- **Optional**: merge_request_iid OR source_branch, view (inline/parallel)
+
+### `list_merge_request_diffs`
+List merge request diffs with pagination support
+- **Required**: project_id
+- **Optional**: merge_request_iid OR source_branch, page, per_page, unidiff
+
+### `get_branch_diffs`
+Get the changes/diffs between two branches or commits
+- **Required**: project_id, from (base branch/commit), to (target branch/commit)
+- **Optional**: straight (comparison method)
 
 ### `create_merge_request`
 Create a new merge request
@@ -45,9 +61,9 @@ Create a new merge request
 - **Optional**: description, assignee_ids, reviewer_ids, labels, milestone_id
 
 ### `update_merge_request`
-Update an existing merge request
-- **Required**: project_id, merge_request_iid
-- **Optional**: title, description, state_event, target_branch, assignee_id, assignee_ids, reviewer_ids, labels, milestone_id, remove_source_branch, squash, allow_collaboration, merge_when_pipeline_succeeds
+Update an existing merge request. Supports lookup by IID or source branch.
+- **Required**: project_id
+- **Optional**: merge_request_iid OR source_branch (one must be provided), title, description, state_event, target_branch, assignee_id, assignee_ids, reviewer_ids, labels, milestone_id, remove_source_branch, squash, allow_collaboration, merge_when_pipeline_succeeds
 
 ## Merge Request Comments & Discussions
 
@@ -83,6 +99,18 @@ Mark a discussion as resolved
 Mark a discussion as unresolved
 - **Required**: project_id, merge_request_iid, discussion_id
 
+### `update_mr_discussion_note`
+Modify an existing note in a merge request discussion
+- **Required**: project_id, merge_request_iid, discussion_id, note_id, body
+
+### `create_mr_discussion_note`
+Add a new note to an existing merge request discussion thread
+- **Required**: project_id, merge_request_iid, discussion_id, body
+
+### `delete_mr_discussion_note`
+Delete a note from a merge request discussion
+- **Required**: project_id, merge_request_iid, discussion_id, note_id
+
 ## Merge Request Draft Status
 
 ### `mark_mr_as_draft`
@@ -111,9 +139,18 @@ List branches in a project
 - **Optional**: search, per_page
 
 ### `get_project_commits`
-Get commit history for a project
+List repository commits with filtering options
 - **Required**: project_id
-- **Optional**: ref_name, since, until, author, per_page
+- **Optional**: ref_name, since, until, author, path, all, with_stats, first_parent, order (default/topo), trailers, page, per_page
+
+### `get_commit`
+Get detailed information about a specific commit
+- **Required**: project_id, sha
+- **Optional**: stats (include additions/deletions)
+
+### `get_commit_diff`
+Get changes/diffs introduced by a specific commit
+- **Required**: project_id, sha
 
 ## Pipeline Management
 
