@@ -225,6 +225,12 @@ export const mergeRequestTools: Tool[] = [
           description: 'Field to order by',
           default: 'created_at',
         },
+        page: {
+          type: 'number',
+          description: 'Page number for pagination (default: 1)',
+          minimum: 1,
+          default: 1,
+        },
         per_page: {
           type: 'number',
           description: 'Number of results per page (max 100)',
@@ -238,7 +244,7 @@ export const mergeRequestTools: Tool[] = [
   {
     name: 'list_mr_discussions',
     description:
-      'List all discussions (threaded comments including inline code comments) on a merge request',
+      'List discussions (threaded comments including inline code comments) on a merge request. Use unresolved_only=true to fetch only unresolved discussions (saves tokens).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -249,6 +255,19 @@ export const mergeRequestTools: Tool[] = [
         merge_request_iid: {
           type: 'number',
           description: 'Merge request internal ID',
+        },
+        unresolved_only: {
+          type: 'boolean',
+          description:
+            'If true, fetches all discussions and returns only unresolved ones. This reduces tokens sent to the LLM by filtering server-side.',
+          default: false,
+        },
+        page: {
+          type: 'number',
+          description:
+            'Page number for pagination (default: 1). Ignored when unresolved_only=true (fetches all pages).',
+          minimum: 1,
+          default: 1,
         },
         per_page: {
           type: 'number',

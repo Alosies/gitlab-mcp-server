@@ -54,12 +54,15 @@ Update an existing merge request
 ### `list_mr_notes`
 List all notes (comments) on a merge request
 - **Required**: project_id, merge_request_iid
-- **Optional**: sort (asc/desc), order_by (created_at/updated_at), per_page
+- **Optional**: sort (asc/desc), order_by (created_at/updated_at), page, per_page
 
 ### `list_mr_discussions`
-List all discussions (threaded comments) on a merge request
+List discussions (threaded comments) on a merge request
 - **Required**: project_id, merge_request_iid
-- **Optional**: per_page
+- **Optional**:
+  - **unresolved_only**: If true, fetches all discussions and returns only unresolved ones (saves tokens)
+  - **page**: Page number for pagination (ignored when unresolved_only=true)
+  - **per_page**: Results per page (max 100)
 
 ### `create_mr_note`
 Create a top-level comment on a merge request

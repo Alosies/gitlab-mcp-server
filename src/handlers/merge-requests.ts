@@ -125,6 +125,7 @@ export class MergeRequestHandlers {
 
     if (args.sort) params.append('sort', args.sort);
     if (args.order_by) params.append('order_by', args.order_by);
+    if (args.page) params.append('page', String(args.page));
     params.append('per_page', String(args.per_page || 20));
 
     const data = await this.client.get(
@@ -142,11 +143,70 @@ export class MergeRequestHandlers {
   }
 
   async listMRDiscussions(args: ListMRDiscussionsParams) {
+    const encodedProjectId = encodeURIComponent(args.project_id);
+    const perPage = args.per_page || 20;
+
+    // If unresolved_only is true, fetch all pages and filter
+    if (args.unresolved_only) {
+      const allDiscussions: any[] = [];
+      let page = 1;
+      let hasMore = true;
+
+      // Fetch all pages (use max per_page for efficiency)
+      while (hasMore) {
+        const { data, headers } = await this.client.getWithHeaders(
+          `/projects/${encodedProjectId}/merge_requests/${args.merge_request_iid}/discussions?per_page=100&page=${page}`
+        );
+
+        allDiscussions.push(...data);
+
+        // Check if there are more pages
+        const nextPage = headers['x-next-page'];
+        hasMore = !!nextPage && nextPage !== '';
+        page++;
+
+        // Safety limit to prevent infinite loops
+        if (page > 100) break;
+      }
+
+      // Filter to only unresolved discussions
+      // A discussion is unresolved if it has resolvable notes and at least one is not resolved
+      const unresolvedDiscussions = allDiscussions.filter((discussion) => {
+        // Check if any note in the discussion is resolvable and not resolved
+        const hasUnresolvedNotes = discussion.notes?.some(
+          (note: any) => note.resolvable === true && note.resolved === false
+        );
+        return hasUnresolvedNotes;
+      });
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                discussions: unresolvedDiscussions,
+                metadata: {
+                  total_fetched: allDiscussions.length,
+                  unresolved_count: unresolvedDiscussions.length,
+                  filtered: true,
+                },
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+
+    // Normal pagination mode
     const params = new URLSearchParams();
-    params.append('per_page', String(args.per_page || 20));
+    if (args.page) params.append('page', String(args.page));
+    params.append('per_page', String(perPage));
 
     const data = await this.client.get(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions?${params.toString()}`
+      `/projects/${encodedProjectId}/merge_requests/${args.merge_request_iid}/discussions?${params.toString()}`
     );
 
     return {

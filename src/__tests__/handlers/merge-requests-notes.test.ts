@@ -56,6 +56,21 @@ describe('MergeRequestHandlers - Notes and Discussions', () => {
         '/projects/123/merge_requests/42/notes?sort=asc&order_by=updated_at&per_page=50'
       );
     });
+
+    it('should support page parameter for pagination', async () => {
+      mockClient.get.mockResolvedValue([]);
+
+      await mergeRequestHandlers.listMRNotes({
+        project_id: '123',
+        merge_request_iid: 42,
+        page: 3,
+        per_page: 25,
+      });
+
+      expect(mockClient.get).toHaveBeenCalledWith(
+        '/projects/123/merge_requests/42/notes?page=3&per_page=25'
+      );
+    });
   });
 
   describe('listMRDiscussions', () => {
@@ -88,6 +103,99 @@ describe('MergeRequestHandlers - Notes and Discussions', () => {
       expect(mockClient.get).toHaveBeenCalledWith(
         '/projects/group%2Fproject/merge_requests/42/discussions?per_page=100'
       );
+    });
+
+    it('should support page parameter for pagination', async () => {
+      mockClient.get.mockResolvedValue([]);
+
+      await mergeRequestHandlers.listMRDiscussions({
+        project_id: '123',
+        merge_request_iid: 42,
+        page: 2,
+        per_page: 50,
+      });
+
+      expect(mockClient.get).toHaveBeenCalledWith(
+        '/projects/123/merge_requests/42/discussions?page=2&per_page=50'
+      );
+    });
+
+    it('should filter to unresolved discussions when unresolved_only is true', async () => {
+      const mockGetWithHeaders = vi.fn();
+      (mockClient as any).getWithHeaders = mockGetWithHeaders;
+
+      const mixedDiscussions = [
+        {
+          id: 'resolved1',
+          notes: [{ id: 1, body: 'Resolved comment', resolvable: true, resolved: true }],
+        },
+        {
+          id: 'unresolved1',
+          notes: [{ id: 2, body: 'Unresolved comment', resolvable: true, resolved: false }],
+        },
+        {
+          id: 'system1',
+          notes: [{ id: 3, body: 'System note', resolvable: false, resolved: null }],
+        },
+        {
+          id: 'unresolved2',
+          notes: [
+            { id: 4, body: 'First reply', resolvable: true, resolved: true },
+            { id: 5, body: 'Second reply unresolved', resolvable: true, resolved: false },
+          ],
+        },
+      ];
+
+      mockGetWithHeaders.mockResolvedValue({
+        data: mixedDiscussions,
+        headers: { 'x-next-page': '' },
+      });
+
+      const result = await mergeRequestHandlers.listMRDiscussions({
+        project_id: '123',
+        merge_request_iid: 42,
+        unresolved_only: true,
+      });
+
+      const parsed = JSON.parse(result.content[0].text);
+
+      expect(parsed.metadata.total_fetched).toBe(4);
+      expect(parsed.metadata.unresolved_count).toBe(2);
+      expect(parsed.metadata.filtered).toBe(true);
+      expect(parsed.discussions).toHaveLength(2);
+      expect(parsed.discussions.map((d: any) => d.id)).toEqual(['unresolved1', 'unresolved2']);
+    });
+
+    it('should fetch all pages when unresolved_only is true', async () => {
+      const mockGetWithHeaders = vi.fn();
+      (mockClient as any).getWithHeaders = mockGetWithHeaders;
+
+      // First page has more
+      mockGetWithHeaders.mockResolvedValueOnce({
+        data: [
+          { id: 'resolved1', notes: [{ resolvable: true, resolved: true }] },
+        ],
+        headers: { 'x-next-page': '2' },
+      });
+
+      // Second page is last
+      mockGetWithHeaders.mockResolvedValueOnce({
+        data: [
+          { id: 'unresolved1', notes: [{ resolvable: true, resolved: false }] },
+        ],
+        headers: { 'x-next-page': '' },
+      });
+
+      const result = await mergeRequestHandlers.listMRDiscussions({
+        project_id: '123',
+        merge_request_iid: 42,
+        unresolved_only: true,
+      });
+
+      expect(mockGetWithHeaders).toHaveBeenCalledTimes(2);
+      const parsed = JSON.parse(result.content[0].text);
+      expect(parsed.metadata.total_fetched).toBe(2);
+      expect(parsed.metadata.unresolved_count).toBe(1);
     });
   });
 

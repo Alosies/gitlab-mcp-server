@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2025-11-26
+
+### 🚀 Added
+
+- **Pagination Support**: Added `page` parameter to `list_mr_notes` and `list_mr_discussions` for navigating large comment threads
+- **Unresolved Filter**: Added `unresolved_only` parameter to `list_mr_discussions`
+  - Fetches all discussions server-side and filters to only unresolved ones
+  - Returns metadata with `total_fetched`, `unresolved_count`, and `filtered` status
+  - Significantly reduces tokens sent to LLM by excluding resolved discussions
+- **Client Enhancement**: Added `getWithHeaders` method to GitLab client for pagination header access
+
+### 🧪 Testing
+
+- Added 4 new tests for pagination and unresolved filtering
+- **108 tests** across 12 test files
+
+---
+
 ## [1.4.0] - 2025-11-26
 
 ### 🚀 Added

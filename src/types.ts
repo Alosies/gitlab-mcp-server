@@ -408,12 +408,15 @@ export interface ListMRNotesParams {
   merge_request_iid: number;
   sort?: 'asc' | 'desc';
   order_by?: 'created_at' | 'updated_at';
+  page?: number;
   per_page?: number;
 }
 
 export interface ListMRDiscussionsParams {
   project_id: string;
   merge_request_iid: number;
+  unresolved_only?: boolean;
+  page?: number;
   per_page?: number;
 }
 

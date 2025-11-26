@@ -33,6 +33,17 @@ export class GitLabClient {
   }
 
   /**
+   * Make a GET request and return both data and headers (for pagination)
+   */
+  async getWithHeaders(endpoint: string): Promise<{ data: any; headers: Record<string, string> }> {
+    const response = await this.axios.get(endpoint);
+    return {
+      data: response.data,
+      headers: response.headers as Record<string, string>,
+    };
+  }
+
+  /**
    * Make a POST request to the GitLab API
    */
   async post(endpoint: string, data?: any): Promise<any> {
