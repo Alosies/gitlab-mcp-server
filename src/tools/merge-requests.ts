@@ -62,7 +62,7 @@ export const mergeRequestTools: Tool[] = [
   },
   {
     name: 'get_merge_request',
-    description: 'Get details of a specific merge request',
+    description: 'Get details of a merge request. Either merge_request_iid or source_branch must be provided.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -74,8 +74,100 @@ export const mergeRequestTools: Tool[] = [
           type: 'number',
           description: 'Merge request internal ID',
         },
+        source_branch: {
+          type: 'string',
+          description: 'Source branch name (alternative to merge_request_iid)',
+        },
       },
-      required: ['project_id', 'merge_request_iid'],
+      required: ['project_id'],
+    },
+  },
+  {
+    name: 'get_merge_request_diffs',
+    description: 'Get the changes/diffs of a merge request. Either merge_request_iid or source_branch must be provided.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'Project ID or path',
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'Merge request internal ID',
+        },
+        source_branch: {
+          type: 'string',
+          description: 'Source branch name (alternative to merge_request_iid)',
+        },
+        view: {
+          type: 'string',
+          enum: ['inline', 'parallel'],
+          description: 'Diff view type',
+        },
+      },
+      required: ['project_id'],
+    },
+  },
+  {
+    name: 'list_merge_request_diffs',
+    description: 'List merge request diffs with pagination support. Either merge_request_iid or source_branch must be provided.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'Project ID or path',
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'Merge request internal ID',
+        },
+        source_branch: {
+          type: 'string',
+          description: 'Source branch name (alternative to merge_request_iid)',
+        },
+        page: {
+          type: 'number',
+          description: 'Page number for pagination (default: 1)',
+        },
+        per_page: {
+          type: 'number',
+          description: 'Number of items per page (max: 100, default: 20)',
+          maximum: 100,
+        },
+        unidiff: {
+          type: 'boolean',
+          description: 'Present diffs in unified diff format (GitLab 16.5+)',
+        },
+      },
+      required: ['project_id'],
+    },
+  },
+  {
+    name: 'get_branch_diffs',
+    description: 'Get the changes/diffs between two branches or commits in a GitLab project',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'Project ID or path',
+        },
+        from: {
+          type: 'string',
+          description: 'The base branch or commit SHA to compare from',
+        },
+        to: {
+          type: 'string',
+          description: 'The target branch or commit SHA to compare to',
+        },
+        straight: {
+          type: 'boolean',
+          description: 'Comparison method: false for "..." (default), true for "--"',
+        },
+      },
+      required: ['project_id', 'from', 'to'],
     },
   },
   {
@@ -128,7 +220,7 @@ export const mergeRequestTools: Tool[] = [
   },
   {
     name: 'update_merge_request',
-    description: 'Update an existing merge request',
+    description: 'Update an existing merge request. Either merge_request_iid or source_branch must be provided.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -139,6 +231,10 @@ export const mergeRequestTools: Tool[] = [
         merge_request_iid: {
           type: 'number',
           description: 'Merge request internal ID',
+        },
+        source_branch: {
+          type: 'string',
+          description: 'Source branch name (alternative to merge_request_iid)',
         },
         title: {
           type: 'string',
@@ -196,7 +292,7 @@ export const mergeRequestTools: Tool[] = [
           description: 'Set MR to merge when pipeline succeeds',
         },
       },
-      required: ['project_id', 'merge_request_iid'],
+      required: ['project_id'],
     },
   },
   {
@@ -419,6 +515,88 @@ export const mergeRequestTools: Tool[] = [
         },
       },
       required: ['project_id', 'merge_request_iid', 'discussion_id'],
+    },
+  },
+  {
+    name: 'update_mr_discussion_note',
+    description: 'Modify an existing merge request discussion note',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'Project ID or path',
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'Merge request internal ID',
+        },
+        discussion_id: {
+          type: 'string',
+          description: 'The ID of the discussion',
+        },
+        note_id: {
+          type: 'number',
+          description: 'The ID of the note to update',
+        },
+        body: {
+          type: 'string',
+          description: 'The new content of the note (supports Markdown)',
+        },
+      },
+      required: ['project_id', 'merge_request_iid', 'discussion_id', 'note_id', 'body'],
+    },
+  },
+  {
+    name: 'create_mr_discussion_note',
+    description: 'Add a new note to an existing merge request discussion thread',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'Project ID or path',
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'Merge request internal ID',
+        },
+        discussion_id: {
+          type: 'string',
+          description: 'The ID of the discussion to add the note to',
+        },
+        body: {
+          type: 'string',
+          description: 'The content of the note (supports Markdown)',
+        },
+      },
+      required: ['project_id', 'merge_request_iid', 'discussion_id', 'body'],
+    },
+  },
+  {
+    name: 'delete_mr_discussion_note',
+    description: 'Delete a note from a merge request discussion',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: {
+          type: 'string',
+          description: 'Project ID or path',
+        },
+        merge_request_iid: {
+          type: 'number',
+          description: 'Merge request internal ID',
+        },
+        discussion_id: {
+          type: 'string',
+          description: 'The ID of the discussion',
+        },
+        note_id: {
+          type: 'number',
+          description: 'The ID of the note to delete',
+        },
+      },
+      required: ['project_id', 'merge_request_iid', 'discussion_id', 'note_id'],
     },
   },
   {

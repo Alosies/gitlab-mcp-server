@@ -253,7 +253,31 @@ export interface ListMergeRequestsParams {
 
 export interface GetMergeRequestParams {
   project_id: string;
-  merge_request_iid: number;
+  merge_request_iid?: number;
+  source_branch?: string;
+}
+
+export interface GetMergeRequestDiffsParams {
+  project_id: string;
+  merge_request_iid?: number;
+  source_branch?: string;
+  view?: 'inline' | 'parallel';
+}
+
+export interface ListMergeRequestDiffsParams {
+  project_id: string;
+  merge_request_iid?: number;
+  source_branch?: string;
+  page?: number;
+  per_page?: number;
+  unidiff?: boolean;
+}
+
+export interface GetBranchDiffsParams {
+  project_id: string;
+  from: string;
+  to: string;
+  straight?: boolean;
 }
 
 export interface CreateMergeRequestParams {
@@ -270,7 +294,8 @@ export interface CreateMergeRequestParams {
 
 export interface UpdateMergeRequestParams {
   project_id: string;
-  merge_request_iid: number;
+  merge_request_iid?: number;
+  source_branch?: string;
   title?: string;
   description?: string;
   state_event?: 'close' | 'reopen';
@@ -298,7 +323,25 @@ export interface GetProjectCommitsParams {
   since?: string;
   until?: string;
   author?: string;
+  path?: string;
+  all?: boolean;
+  with_stats?: boolean;
+  first_parent?: boolean;
+  order?: 'default' | 'topo';
+  trailers?: boolean;
+  page?: number;
   per_page?: number;
+}
+
+export interface GetCommitParams {
+  project_id: string;
+  sha: string;
+  stats?: boolean;
+}
+
+export interface GetCommitDiffParams {
+  project_id: string;
+  sha: string;
 }
 
 export interface ListPipelinesParams {
@@ -391,6 +434,25 @@ export interface GitLabDiffPosition {
   new_line?: number | null;
 }
 
+export interface GitLabDiff {
+  old_path: string;
+  new_path: string;
+  a_mode: string;
+  b_mode: string;
+  diff: string;
+  new_file: boolean;
+  renamed_file: boolean;
+  deleted_file: boolean;
+}
+
+export interface GitLabCompare {
+  commit: GitLabCommit;
+  commits: GitLabCommit[];
+  diffs: GitLabDiff[];
+  compare_timeout: boolean;
+  compare_same_ref: boolean;
+}
+
 export interface GitLabDiscussion {
   id: string;
   individual_note: boolean;
@@ -450,6 +512,29 @@ export interface ResolveMRDiscussionParams {
   project_id: string;
   merge_request_iid: number;
   discussion_id: string;
+  resolved?: boolean;
+}
+
+export interface UpdateMRDiscussionNoteParams {
+  project_id: string;
+  merge_request_iid: number;
+  discussion_id: string;
+  note_id: number;
+  body: string;
+}
+
+export interface CreateMRDiscussionNoteParams {
+  project_id: string;
+  merge_request_iid: number;
+  discussion_id: string;
+  body: string;
+}
+
+export interface DeleteMRDiscussionNoteParams {
+  project_id: string;
+  merge_request_iid: number;
+  discussion_id: string;
+  note_id: number;
 }
 
 export interface MarkMRAsDraftParams {

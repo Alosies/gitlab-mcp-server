@@ -36,18 +36,26 @@ import type {
   GetMergeRequestParams,
   CreateMergeRequestParams,
   UpdateMergeRequestParams,
+  GetMergeRequestDiffsParams,
+  ListMergeRequestDiffsParams,
+  GetBranchDiffsParams,
   ListMRNotesParams,
   ListMRDiscussionsParams,
   CreateMRNoteParams,
   CreateMRDiscussionParams,
   ReplyToMRDiscussionParams,
   ResolveMRDiscussionParams,
+  UpdateMRDiscussionNoteParams,
+  CreateMRDiscussionNoteParams,
+  DeleteMRDiscussionNoteParams,
   MarkMRAsDraftParams,
   MarkMRAsReadyParams,
   ListMRTemplatesParams,
   GetMRTemplateParams,
   ListProjectBranchesParams,
   GetProjectCommitsParams,
+  GetCommitParams,
+  GetCommitDiffParams,
   ListPipelinesParams,
   GetPipelineParams,
   CreatePipelineParams,
@@ -160,6 +168,12 @@ export class GitLabMCPServer implements IGitLabMCPServer {
             return await this.mergeRequestHandlers.createMergeRequest(args as unknown as CreateMergeRequestParams);
           case 'update_merge_request':
             return await this.mergeRequestHandlers.updateMergeRequest(args as unknown as UpdateMergeRequestParams);
+          case 'get_merge_request_diffs':
+            return await this.mergeRequestHandlers.getMergeRequestDiffs(args as unknown as GetMergeRequestDiffsParams);
+          case 'list_merge_request_diffs':
+            return await this.mergeRequestHandlers.listMergeRequestDiffs(args as unknown as ListMergeRequestDiffsParams);
+          case 'get_branch_diffs':
+            return await this.mergeRequestHandlers.getBranchDiffs(args as unknown as GetBranchDiffsParams);
 
           // Merge request notes/discussions tools
           case 'list_mr_notes':
@@ -176,6 +190,12 @@ export class GitLabMCPServer implements IGitLabMCPServer {
             return await this.mergeRequestHandlers.resolveMRDiscussion(args as unknown as ResolveMRDiscussionParams);
           case 'unresolve_mr_discussion':
             return await this.mergeRequestHandlers.unresolveMRDiscussion(args as unknown as ResolveMRDiscussionParams);
+          case 'update_mr_discussion_note':
+            return await this.mergeRequestHandlers.updateMRDiscussionNote(args as unknown as UpdateMRDiscussionNoteParams);
+          case 'create_mr_discussion_note':
+            return await this.mergeRequestHandlers.createMRDiscussionNote(args as unknown as CreateMRDiscussionNoteParams);
+          case 'delete_mr_discussion_note':
+            return await this.mergeRequestHandlers.deleteMRDiscussionNote(args as unknown as DeleteMRDiscussionNoteParams);
           case 'mark_mr_as_draft':
             return await this.mergeRequestHandlers.markMRAsDraft(args as unknown as MarkMRAsDraftParams);
           case 'mark_mr_as_ready':
@@ -194,6 +214,10 @@ export class GitLabMCPServer implements IGitLabMCPServer {
             return await this.repositoryHandlers.listProjectBranches(args as unknown as ListProjectBranchesParams);
           case 'get_project_commits':
             return await this.repositoryHandlers.getProjectCommits(args as unknown as GetProjectCommitsParams);
+          case 'get_commit':
+            return await this.repositoryHandlers.getCommit(args as unknown as GetCommitParams);
+          case 'get_commit_diff':
+            return await this.repositoryHandlers.getCommitDiff(args as unknown as GetCommitDiffParams);
 
           // Pipeline tools
           case 'list_pipelines':
