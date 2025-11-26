@@ -1,4 +1,4 @@
-import type { GitLabClient } from '../client.js';
+import type { GitLabClient } from "../client.js";
 import type {
   ListMergeRequestsParams,
   GetMergeRequestParams,
@@ -21,12 +21,10 @@ import type {
   ListMRTemplatesParams,
   GetMRTemplateParams,
   GitLabMergeRequest,
-} from '../types.js';
+} from "../types.js";
 
 export class MergeRequestHandlers {
-  constructor(
-    private client: GitLabClient
-  ) {}
+  constructor(private client: GitLabClient) {}
 
   /**
    * Helper method to resolve merge request IID from source branch name
@@ -41,22 +39,34 @@ export class MergeRequestHandlers {
     }
 
     if (!sourceBranch) {
-      throw new Error('Either merge_request_iid or source_branch must be provided');
+      throw new Error(
+        "Either merge_request_iid or source_branch must be provided"
+      );
     }
 
     // Find MR by source branch
-    const mrs = await this.client.get(
-      `/projects/${encodeURIComponent(projectId)}/merge_requests?source_branch=${encodeURIComponent(sourceBranch)}&state=opened&per_page=1`
-    ) as GitLabMergeRequest[];
+    const mrs = (await this.client.get(
+      `/projects/${encodeURIComponent(
+        projectId
+      )}/merge_requests?source_branch=${encodeURIComponent(
+        sourceBranch
+      )}&state=opened&per_page=1`
+    )) as GitLabMergeRequest[];
 
     if (!mrs || mrs.length === 0) {
       // Try all states if no open MR found
-      const allMrs = await this.client.get(
-        `/projects/${encodeURIComponent(projectId)}/merge_requests?source_branch=${encodeURIComponent(sourceBranch)}&per_page=1`
-      ) as GitLabMergeRequest[];
+      const allMrs = (await this.client.get(
+        `/projects/${encodeURIComponent(
+          projectId
+        )}/merge_requests?source_branch=${encodeURIComponent(
+          sourceBranch
+        )}&per_page=1`
+      )) as GitLabMergeRequest[];
 
       if (!allMrs || allMrs.length === 0) {
-        throw new Error(`No merge request found for source branch: ${sourceBranch}`);
+        throw new Error(
+          `No merge request found for source branch: ${sourceBranch}`
+        );
       }
 
       return allMrs[0].iid;
@@ -68,24 +78,31 @@ export class MergeRequestHandlers {
   async listMergeRequests(args: ListMergeRequestsParams) {
     const params = new URLSearchParams();
 
-    if (args.state) params.append('state', args.state);
-    if (args.target_branch) params.append('target_branch', args.target_branch);
-    if (args.source_branch) params.append('source_branch', args.source_branch);
-    if (args.assignee_id) params.append('assignee_id', String(args.assignee_id));
-    if (args.author_id) params.append('author_id', String(args.author_id));
-    if (args.reviewer_id) params.append('reviewer_id', String(args.reviewer_id));
-    if (args.reviewer_username) params.append('reviewer_username', args.reviewer_username);
-    if (args.search) params.append('search', args.search);
+    if (args.state) params.append("state", args.state);
+    if (args.target_branch) params.append("target_branch", args.target_branch);
+    if (args.source_branch) params.append("source_branch", args.source_branch);
+    if (args.assignee_id)
+      params.append("assignee_id", String(args.assignee_id));
+    if (args.author_id) params.append("author_id", String(args.author_id));
+    if (args.reviewer_id)
+      params.append("reviewer_id", String(args.reviewer_id));
+    if (args.reviewer_username)
+      params.append("reviewer_username", args.reviewer_username);
+    if (args.search) params.append("search", args.search);
     // Only add scope if explicitly provided by user
-    if (args.scope) params.append('scope', args.scope);
-    params.append('per_page', String(args.per_page || 20));
+    if (args.scope) params.append("scope", args.scope);
+    params.append("per_page", String(args.per_page || 20));
 
-    const data = await this.client.get(`/projects/${encodeURIComponent(args.project_id)}/merge_requests?${params.toString()}`);
-    
+    const data = await this.client.get(
+      `/projects/${encodeURIComponent(
+        args.project_id
+      )}/merge_requests?${params.toString()}`
+    );
+
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -100,13 +117,15 @@ export class MergeRequestHandlers {
     );
 
     const data = await this.client.get(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${mergeRequestIid}`
+      `/projects/${encodeURIComponent(
+        args.project_id
+      )}/merge_requests/${mergeRequestIid}`
     );
-    
+
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -121,17 +140,21 @@ export class MergeRequestHandlers {
     );
 
     const params = new URLSearchParams();
-    if (args.view) params.append('view', args.view);
+    if (args.view) params.append("view", args.view);
 
     const queryString = params.toString();
-    const url = `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${mergeRequestIid}/changes${queryString ? `?${queryString}` : ''}`;
-    
+    const url = `/projects/${encodeURIComponent(
+      args.project_id
+    )}/merge_requests/${mergeRequestIid}/changes${
+      queryString ? `?${queryString}` : ""
+    }`;
+
     const data = await this.client.get(url);
-    
+
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -146,19 +169,24 @@ export class MergeRequestHandlers {
     );
 
     const params = new URLSearchParams();
-    if (args.page) params.append('page', String(args.page));
-    if (args.per_page) params.append('per_page', String(args.per_page));
-    if (args.unidiff !== undefined) params.append('unidiff', String(args.unidiff));
+    if (args.page) params.append("page", String(args.page));
+    if (args.per_page) params.append("per_page", String(args.per_page));
+    if (args.unidiff !== undefined)
+      params.append("unidiff", String(args.unidiff));
 
     const queryString = params.toString();
-    const url = `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${mergeRequestIid}/diffs${queryString ? `?${queryString}` : ''}`;
-    
+    const url = `/projects/${encodeURIComponent(
+      args.project_id
+    )}/merge_requests/${mergeRequestIid}/diffs${
+      queryString ? `?${queryString}` : ""
+    }`;
+
     const data = await this.client.get(url);
-    
+
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -167,18 +195,21 @@ export class MergeRequestHandlers {
 
   async getBranchDiffs(args: GetBranchDiffsParams) {
     const params = new URLSearchParams();
-    params.append('from', args.from);
-    params.append('to', args.to);
-    if (args.straight !== undefined) params.append('straight', String(args.straight));
+    params.append("from", args.from);
+    params.append("to", args.to);
+    if (args.straight !== undefined)
+      params.append("straight", String(args.straight));
 
-    const url = `/projects/${encodeURIComponent(args.project_id)}/repository/compare?${params.toString()}`;
-    
+    const url = `/projects/${encodeURIComponent(
+      args.project_id
+    )}/repository/compare?${params.toString()}`;
+
     const data = await this.client.get(url);
-    
+
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -201,12 +232,15 @@ export class MergeRequestHandlers {
     if (args.labels) requestData.labels = args.labels;
     if (args.milestone_id) requestData.milestone_id = args.milestone_id;
 
-    const data = await this.client.post(`/projects/${encodeURIComponent(args.project_id)}/merge_requests`, requestData);
-    
+    const data = await this.client.post(
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests`,
+      requestData
+    );
+
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -224,28 +258,41 @@ export class MergeRequestHandlers {
 
     // Only include provided parameters
     if (args.title !== undefined) requestData.title = args.title;
-    if (args.description !== undefined) requestData.description = args.description;
-    if (args.state_event !== undefined) requestData.state_event = args.state_event;
-    if (args.target_branch !== undefined) requestData.target_branch = args.target_branch;
-    if (args.assignee_id !== undefined) requestData.assignee_id = args.assignee_id;
-    if (args.assignee_ids !== undefined) requestData.assignee_ids = args.assignee_ids;
-    if (args.reviewer_ids !== undefined) requestData.reviewer_ids = args.reviewer_ids;
-    if (args.milestone_id !== undefined) requestData.milestone_id = args.milestone_id;
+    if (args.description !== undefined)
+      requestData.description = args.description;
+    if (args.state_event !== undefined)
+      requestData.state_event = args.state_event;
+    if (args.target_branch !== undefined)
+      requestData.target_branch = args.target_branch;
+    if (args.assignee_id !== undefined)
+      requestData.assignee_id = args.assignee_id;
+    if (args.assignee_ids !== undefined)
+      requestData.assignee_ids = args.assignee_ids;
+    if (args.reviewer_ids !== undefined)
+      requestData.reviewer_ids = args.reviewer_ids;
+    if (args.milestone_id !== undefined)
+      requestData.milestone_id = args.milestone_id;
     if (args.labels !== undefined) requestData.labels = args.labels;
-    if (args.remove_source_branch !== undefined) requestData.remove_source_branch = args.remove_source_branch;
+    if (args.remove_source_branch !== undefined)
+      requestData.remove_source_branch = args.remove_source_branch;
     if (args.squash !== undefined) requestData.squash = args.squash;
-    if (args.allow_collaboration !== undefined) requestData.allow_collaboration = args.allow_collaboration;
-    if (args.merge_when_pipeline_succeeds !== undefined) requestData.merge_when_pipeline_succeeds = args.merge_when_pipeline_succeeds;
+    if (args.allow_collaboration !== undefined)
+      requestData.allow_collaboration = args.allow_collaboration;
+    if (args.merge_when_pipeline_succeeds !== undefined)
+      requestData.merge_when_pipeline_succeeds =
+        args.merge_when_pipeline_succeeds;
 
     const data = await this.client.put(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${mergeRequestIid}`,
+      `/projects/${encodeURIComponent(
+        args.project_id
+      )}/merge_requests/${mergeRequestIid}`,
       requestData
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -255,18 +302,20 @@ export class MergeRequestHandlers {
   async listMRNotes(args: ListMRNotesParams) {
     const params = new URLSearchParams();
 
-    if (args.sort) params.append('sort', args.sort);
-    if (args.order_by) params.append('order_by', args.order_by);
-    params.append('per_page', String(args.per_page || 20));
+    if (args.sort) params.append("sort", args.sort);
+    if (args.order_by) params.append("order_by", args.order_by);
+    params.append("per_page", String(args.per_page || 20));
 
     const data = await this.client.get(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/notes?${params.toString()}`
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/notes?${params.toString()}`
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -275,16 +324,18 @@ export class MergeRequestHandlers {
 
   async listMRDiscussions(args: ListMRDiscussionsParams) {
     const params = new URLSearchParams();
-    params.append('per_page', String(args.per_page || 20));
+    params.append("per_page", String(args.per_page || 20));
 
     const data = await this.client.get(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions?${params.toString()}`
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/discussions?${params.toString()}`
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -297,14 +348,16 @@ export class MergeRequestHandlers {
     };
 
     const data = await this.client.post(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/notes`,
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/notes`,
       requestData
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -324,21 +377,27 @@ export class MergeRequestHandlers {
         head_sha: args.position.head_sha,
         old_path: args.position.old_path,
         new_path: args.position.new_path,
-        position_type: args.position.position_type || 'text',
-        ...(args.position.old_line !== undefined && { old_line: args.position.old_line }),
-        ...(args.position.new_line !== undefined && { new_line: args.position.new_line }),
+        position_type: args.position.position_type || "text",
+        ...(args.position.old_line !== undefined && {
+          old_line: args.position.old_line,
+        }),
+        ...(args.position.new_line !== undefined && {
+          new_line: args.position.new_line,
+        }),
       };
     }
 
     const data = await this.client.post(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions`,
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/discussions`,
       requestData
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -351,14 +410,16 @@ export class MergeRequestHandlers {
     };
 
     const data = await this.client.post(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions/${args.discussion_id}/notes`,
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/discussions/${args.discussion_id}/notes`,
       requestData
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -367,14 +428,16 @@ export class MergeRequestHandlers {
 
   async resolveMRDiscussion(args: ResolveMRDiscussionParams) {
     const data = await this.client.put(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions/${args.discussion_id}`,
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/discussions/${args.discussion_id}`,
       { resolved: true }
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -383,14 +446,16 @@ export class MergeRequestHandlers {
 
   async unresolveMRDiscussion(args: ResolveMRDiscussionParams) {
     const data = await this.client.put(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions/${args.discussion_id}`,
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/discussions/${args.discussion_id}`,
       { resolved: false }
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -399,14 +464,16 @@ export class MergeRequestHandlers {
 
   async updateMRDiscussionNote(args: UpdateMRDiscussionNoteParams) {
     const data = await this.client.put(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions/${args.discussion_id}/notes/${args.note_id}`,
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/discussions/${args.discussion_id}/notes/${args.note_id}`,
       { body: args.body }
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -415,14 +482,16 @@ export class MergeRequestHandlers {
 
   async createMRDiscussionNote(args: CreateMRDiscussionNoteParams) {
     const data = await this.client.post(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions/${args.discussion_id}/notes`,
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/discussions/${args.discussion_id}/notes`,
       { body: args.body }
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -431,14 +500,20 @@ export class MergeRequestHandlers {
 
   async deleteMRDiscussionNote(args: DeleteMRDiscussionNoteParams) {
     await this.client.delete(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}/discussions/${args.discussion_id}/notes/${args.note_id}`
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }/discussions/${args.discussion_id}/notes/${args.note_id}`
     );
 
     return {
       content: [
         {
-          type: 'text',
-          text: JSON.stringify({ message: 'Note deleted successfully' }, null, 2),
+          type: "text",
+          text: JSON.stringify(
+            { message: "Note deleted successfully" },
+            null,
+            2
+          ),
         },
       ],
     };
@@ -447,16 +522,22 @@ export class MergeRequestHandlers {
   async markMRAsDraft(args: MarkMRAsDraftParams) {
     // First get the current MR to check its title
     const mr = (await this.client.get(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}`
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }`
     )) as GitLabMergeRequest;
 
     // Check if already a draft
-    if (mr.title.startsWith('Draft: ') || mr.title.startsWith('WIP: ')) {
+    if (mr.title.startsWith("Draft: ") || mr.title.startsWith("WIP: ")) {
       return {
         content: [
           {
-            type: 'text',
-            text: JSON.stringify({ message: 'Merge request is already marked as draft', ...mr }, null, 2),
+            type: "text",
+            text: JSON.stringify(
+              { message: "Merge request is already marked as draft", ...mr },
+              null,
+              2
+            ),
           },
         ],
       };
@@ -464,14 +545,16 @@ export class MergeRequestHandlers {
 
     // Update the title to add Draft: prefix
     const data = await this.client.put(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}`,
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }`,
       { title: `Draft: ${mr.title}` }
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -481,21 +564,27 @@ export class MergeRequestHandlers {
   async markMRAsReady(args: MarkMRAsReadyParams) {
     // First get the current MR to check its title
     const mr = (await this.client.get(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}`
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }`
     )) as GitLabMergeRequest;
 
     // Check if it's a draft and remove the prefix
     let newTitle = mr.title;
-    if (mr.title.startsWith('Draft: ')) {
-      newTitle = mr.title.replace(/^Draft: /, '');
-    } else if (mr.title.startsWith('WIP: ')) {
-      newTitle = mr.title.replace(/^WIP: /, '');
+    if (mr.title.startsWith("Draft: ")) {
+      newTitle = mr.title.replace(/^Draft: /, "");
+    } else if (mr.title.startsWith("WIP: ")) {
+      newTitle = mr.title.replace(/^WIP: /, "");
     } else {
       return {
         content: [
           {
-            type: 'text',
-            text: JSON.stringify({ message: 'Merge request is already marked as ready', ...mr }, null, 2),
+            type: "text",
+            text: JSON.stringify(
+              { message: "Merge request is already marked as ready", ...mr },
+              null,
+              2
+            ),
           },
         ],
       };
@@ -503,14 +592,16 @@ export class MergeRequestHandlers {
 
     // Update the title to remove the draft prefix
     const data = await this.client.put(
-      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${args.merge_request_iid}`,
+      `/projects/${encodeURIComponent(args.project_id)}/merge_requests/${
+        args.merge_request_iid
+      }`,
       { title: newTitle }
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -519,13 +610,15 @@ export class MergeRequestHandlers {
 
   async listMRTemplates(args: ListMRTemplatesParams) {
     const data = await this.client.get(
-      `/projects/${encodeURIComponent(args.project_id)}/templates/merge_requests`
+      `/projects/${encodeURIComponent(
+        args.project_id
+      )}/templates/merge_requests`
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
@@ -534,13 +627,15 @@ export class MergeRequestHandlers {
 
   async getMRTemplate(args: GetMRTemplateParams) {
     const data = await this.client.get(
-      `/projects/${encodeURIComponent(args.project_id)}/templates/merge_requests/${encodeURIComponent(args.name)}`
+      `/projects/${encodeURIComponent(
+        args.project_id
+      )}/templates/merge_requests/${encodeURIComponent(args.name)}`
     );
 
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(data, null, 2),
         },
       ],
