@@ -3,7 +3,7 @@
 A fully typed TypeScript [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for comprehensive GitLab integration.
 
 <a href="https://glama.ai/mcp/servers/@Alosies/gitlab-mcp-server">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@Alosies/gitlab-mcp-server/badge" alt="GitLab Server MCP server" />
+  <img width="200" height="105" src="https://glama.ai/mcp/servers/@Alosies/gitlab-mcp-server/badge" alt="GitLab MCP Server on Glama" />
 </a>
 
 ## Quick Start
