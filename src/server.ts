@@ -121,10 +121,10 @@ export class GitLabMCPServer implements IGitLabMCPServer {
     const mcpConfig = this.configManager.get();
 
     // Token is required, but can come from env or config
-    const token = mcpConfig.gitlab.token || process.env.NPM_CONFIG_TOKEN || "";
+    const token = mcpConfig.gitlab.token || process.env.GITLAB_PERSONAL_ACCESS_TOKEN || process.env.NPM_CONFIG_TOKEN || "";
     if (!token) {
       throw new Error(
-        "GitLab token is required. Set NPM_CONFIG_TOKEN environment variable."
+        "GitLab token is required. Set GITLAB_PERSONAL_ACCESS_TOKEN environment variable."
       );
     }
 

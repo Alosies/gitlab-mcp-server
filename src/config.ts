@@ -83,7 +83,7 @@ export class ConfigManager {
             if (gitlabServer.env) {
               loadedConfig.gitlab = {
                 ...loadedConfig.gitlab,
-                token: gitlabServer.env.NPM_CONFIG_TOKEN || gitlabServer.env.GITLAB_TOKEN,
+                token: gitlabServer.env.GITLAB_PERSONAL_ACCESS_TOKEN || gitlabServer.env.NPM_CONFIG_TOKEN || gitlabServer.env.GITLAB_TOKEN,
                 baseUrl: gitlabServer.env.GITLAB_BASE_URL,
                 defaultProject: gitlabServer.env.GITLAB_DEFAULT_PROJECT,
               };
@@ -153,7 +153,7 @@ export class ConfigManager {
     return {
       gitlab: {
         baseUrl: process.env.GITLAB_BASE_URL || process.env.NPM_CONFIG_BASE_URL,
-        token: process.env.NPM_CONFIG_TOKEN || process.env.GITLAB_TOKEN || process.env.GITLAB_ACCESS_TOKEN,
+        token: process.env.GITLAB_PERSONAL_ACCESS_TOKEN || process.env.NPM_CONFIG_TOKEN || process.env.GITLAB_TOKEN || process.env.GITLAB_ACCESS_TOKEN,
         defaultProject: process.env.GITLAB_DEFAULT_PROJECT,
       },
       server: {

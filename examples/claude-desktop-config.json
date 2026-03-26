@@ -4,7 +4,7 @@
       "command": "npx",
       "args": ["-y", "@alosies/gitlab-mcp-server"],
       "env": {
-        "NPM_CONFIG_TOKEN": "your-gitlab-token-here",
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "your-gitlab-token-here",
         "GITLAB_DEFAULT_PROJECT": "myorg/myproject",
         "GITLAB_MCP_PER_PAGE": "30"
       }

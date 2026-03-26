@@ -39,7 +39,7 @@ Then use in Claude Desktop:
     "gitlab": {
       "command": "gitlab-mcp-server",
       "env": {
-        "NPM_CONFIG_TOKEN": "your-gitlab-token-here"
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "your-gitlab-token-here"
       }
     }
   }
@@ -57,23 +57,23 @@ Then use in Claude Desktop:
 
 1. Go to GitLab.com (or your GitLab instance)
 2. Navigate to **Settings** > **Access Tokens**
-3. Create a new token with the following scopes:
-   - `api` - Full API access
-   - `read_user` - Read user information
-   - `read_repository` - Read repository data
+3. Create a new token with **required scopes**:
+   - ✅ `api` - Full API access (required)
+   - ✅ `read_user` - Read user information (required)
+   - ✅ `read_repository` - Read repository data (required)
 
 ## Environment Setup
 
 Set your GitLab token as an environment variable:
 
 ```bash
-export NPM_CONFIG_TOKEN="your-gitlab-token-here"
+export GITLAB_PERSONAL_ACCESS_TOKEN="your-gitlab-token-here"
 ```
 
 Or create a `.env` file (not recommended for production):
 
 ```
-NPM_CONFIG_TOKEN=your-gitlab-token-here
+GITLAB_PERSONAL_ACCESS_TOKEN=your-gitlab-token-here
 ```
 
 ## Claude Desktop Configuration
@@ -92,7 +92,7 @@ Add the following to your Claude Desktop configuration file:
       "command": "npx",
       "args": ["-y", "@alosies/gitlab-mcp-server"],
       "env": {
-        "NPM_CONFIG_TOKEN": "your-gitlab-token-here"
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "your-gitlab-token-here"
       }
     }
   }
@@ -111,7 +111,7 @@ npm install -g @alosies/gitlab-mcp-server
     "gitlab": {
       "command": "gitlab-mcp-server",
       "env": {
-        "NPM_CONFIG_TOKEN": "your-gitlab-token-here"
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "your-gitlab-token-here"
       }
     }
   }
@@ -127,7 +127,7 @@ npm install -g @alosies/gitlab-mcp-server
       "command": "node",
       "args": ["/path/to/gitlab-mcp-server/dist/index.js"],
       "env": {
-        "NPM_CONFIG_TOKEN": "your-gitlab-token-here"
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "your-gitlab-token-here"
       }
     }
   }

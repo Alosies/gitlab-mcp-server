@@ -23,7 +23,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
       "command": "npx",
       "args": ["-y", "@alosies/gitlab-mcp-server"],
       "env": {
-        "NPM_CONFIG_TOKEN": "your-gitlab-token-here"
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "your-gitlab-token-here"
       }
     }
   }
@@ -76,7 +76,7 @@ For self-hosted GitLab instances, add your base URL:
       "command": "npx",
       "args": ["-y", "@alosies/gitlab-mcp-server"],
       "env": {
-        "NPM_CONFIG_TOKEN": "your-token",
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "your-token",
         "GITLAB_BASE_URL": "https://gitlab.mycompany.com"
       }
     }
